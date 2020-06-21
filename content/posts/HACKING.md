@@ -1,15 +1,14 @@
-+++
-title = "(Hu)go Template Primer"
-tags = [
-    "go",
-    "golang",
-    "templates",
-    "themes",
-    "development",
-]
-date = "2014-04-02"
-toc = true
-+++ 
+---
+title: "HACKING.md"
+description: "> https://github.com/golang/go/blob/master/src/runtime/HACKING.md 待翻译"
+tags: [ "golang", ]
+categories: [ "golang", ]
+keywords: [ "golang", "goroutine" ]
+isCJKLanguage: true
+
+date: 2020-06-21T11:00:53+08:00
+draft: false
+---
 
 
 > https://github.com/golang/go/blob/master/src/runtime/HACKING.md 待翻译
