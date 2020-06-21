@@ -1,3 +1,17 @@
++++
+title = "(Hu)go Template Primer"
+tags = [
+    "go",
+    "golang",
+    "templates",
+    "themes",
+    "development",
+]
+date = "2014-04-02"
+toc = true
++++ 
+
+
 > https://github.com/golang/go/blob/master/src/runtime/HACKING.md 待翻译
 
 This is a living document and at times it will be out of date. It is
