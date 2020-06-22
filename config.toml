@@ -34,14 +34,15 @@ enableGitInfo = true
   dateform        = "Jan 2, 2006"
   dateformShort   = "Jan 2"
   dateformNum     = "2006-01-02"
-  dateformNumTime = "2006-01-02 15:04 -0700"
+  dateformNumTime = "2006-01-02"
+#  dateformNumTime = "2006-01-02 15:04 -0700"
 
   # Metadata mostly used in document's head
   # description = ""
   # images = [""]
   themeColor = "#494f5c"
 
-  homeSubtitle = "--------------------"
+  homeSubtitle = "一个不想当混子的、可能不会秃头的混子博客"
   footerCopyright = ' &#183; <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>'
   # bgImg = ""  # Homepage background-image URL
   logoImage = "me.jpeg" # https://realfavicongenerator.net/
@@ -81,7 +82,7 @@ enableGitInfo = true
     name = "github"
     url = "https://github.com/"
 [params.meta]
-  description = "Imp1mp"
+  description = "一个不想当混子的混子的博客"
   keywords = "micro,cloudnative,devops,kubernetes,prometheus,golang,python,programming"
 
 [menu]

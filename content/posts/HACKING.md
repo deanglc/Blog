@@ -1,41 +1,61 @@
 ---
-title: "HACKING.md"
+title: "渣翻Go runtime里的HACKING.md"
 description: "> https://github.com/golang/go/blob/master/src/runtime/HACKING.md 待翻译"
 tags: [ "golang", ]
 categories: [ "golang", ]
 keywords: [ "golang", "goroutine" ]
 isCJKLanguage: true
 
-date: 2020-06-21T11:00:53+08:00
+date: 2019-03-21T11:00:53
 draft: false
 ---
 
 
-> https://github.com/golang/go/blob/master/src/runtime/HACKING.md 待翻译
+>源文件 https://github.com/golang/go/blob/master/src/runtime/HACKING.md   Go1.11
 
 This is a living document and at times it will be out of date. It is
 intended to articulate how programming in the Go runtime differs from
 writing normal Go. It focuses on pervasive concepts rather than
-details of particular interfaces.
+details of particular interfaces.   
+***这个文档的内容具有时效性(因为go的更新频繁)。该文档旨在说明runtime 代码和一般的 go 代码区别，所以主要内容是runtime里常见的概念而不是一些细节的实现。***
 
-Scheduler structures
+Scheduler structures-调度器结构
 ====================
 
 The scheduler manages three types of resources that pervade the
 runtime: Gs, Ms, and Ps. It's important to understand these even if
-you're not working on the scheduler.
+you're not working on the scheduler.   
+
+***调度器管理着3种类型:Gs, Ms, and Ps,且这仨在runtime随处可见,即便你是api仔,了解这些概念对你也很重要.***
 
 Gs, Ms, Ps
 ----------
 
 A "G" is simply a goroutine. It's represented by type `g`. When a
 goroutine exits, its `g` object is returned to a pool of free `g`s and
-can later be reused for some other goroutine.
+can later be reused for some other goroutine.   
+
+
+***1个`G` = 1个goroutine.在 runtime 中用有个struct `g` (如下代码).当一个 goroutine 退出时，`g` 对象会被放一个空闲的 `g` 对象池中,以便其他的 goroutine 的使用。***
+
+```go
+// grep "type g struct" ./ -R -n
+// runtime/runtime2.go  
+// m、p、g都在这个文件声明
+type g struct {
+	stack       stack   // offset known to runtime/cgo
+	stackguard0 uintptr // offset known to liblink
+	stackguard1 uintptr // offset known to liblink
+  ...
+} 
+```
 
 An "M" is an OS thread that can be executing user Go code, runtime
 code, a system call, or be idle. It's represented by type `m`. There
 can be any number of Ms at a time since any number of threads may be
 blocked in system calls.
+
+***1个 `M` = 1个操作系统线程.`M`可以执行GO代码、runtime代码,也可以被调用和被闲置.在某一时刻,可以有任意数量的`M` 因为可能有任意数量的线程阻塞.***
 
 Finally, a "P" represents the resources required to execute user Go
 code, such as scheduler and memory allocator state. It's represented
@@ -45,6 +65,8 @@ per-CPU state. This is a good place to put state that needs to be
 sharded for efficiency, but doesn't need to be per-thread or
 per-goroutine.
 
+***`P` 代表着执行用户go代码的resources(上下文?),比如调度器状态、内存分配状态.在runtime里,(struct) p表示.`P` 的数量默认等于`GOMAXPROCS`的数量.一个`P`可视为一个操作系统调度器中的 CPU.struct `p`存储着每个CPU的状态.`p`便于存储一些需要高效分享的信息.***
+
 The scheduler's job is to match up a G (the code to execute), an M
 (where to execute it), and a P (the rights and resources to execute
 it). When an M stops executing user Go code, for example by entering a
@@ -52,11 +74,15 @@ system call, it returns its P to the idle P pool. In order to resume
 executing user Go code, for example on return from a system call, it
 must acquire a P from the idle pool.
 
+***调度器的工作就是将一个`G`-(被执行的代码),一个`M`-(决定在哪里执行)、一个`P`(执行代码所需的权限和资源)匹配.当一个`M`停止执行用户的Go代码时(比如被系统调用),它将会把`P`放回一个P空闲池.相应的,在需要继续执行用户的Go代码时,也会从P空闲池取出一个`P`***
+
 All `g`, `m`, and `p` objects are heap allocated, but are never freed,
 so their memory remains type stable. As a result, the runtime can
 avoid write barriers in the depths of the scheduler.
 
-User stacks and system stacks
+***g、m、p对象都分配在堆上且从不释放,所以他们在内存十分稳定.因此runtime底层无需实现内存屏障 .(write barriers本渣没得底蕴,暂时翻不出来)***
+
+User stacks and system stacks-用户栈&系统栈
 -----------------------------
 
 Every non-dead G has a *user stack* associated with it, which is what
@@ -90,7 +116,7 @@ system or signal stacks, this will return the current M's "g0" or
 To determine if you're running on the user stack or the system stack,
 use `getg() == getg().m.curg`.
 
-Error handling and reporting
+Error handling and reporting-错误处理
 ============================
 
 Errors that can reasonably be recovered from in user code should use
@@ -108,7 +134,7 @@ messages are prefixed with "runtime:".
 For runtime error debugging, it's useful to run with
 `GOTRACEBACK=system` or `GOTRACEBACK=crash`.
 
-Synchronization
+Synchronization-同步
 ===============
 
 The runtime has multiple synchronization mechanisms. They differ in
@@ -150,7 +176,7 @@ In summary,
 <tr><td>park</td><td>Y</td><td>N</td><td>N</td></tr>
 </table>
 
-Atomics
+Atomics-原子操作
 =======
 
 The runtime uses its own atomics package at `runtime/internal/atomic`.
