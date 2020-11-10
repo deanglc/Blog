@@ -10,7 +10,6 @@ date: 2019-03-19T11:00:53
 draft: false
 ---
 
-##Docker镜像瘦身&Go mod初体验
 
 ​    go1.11版本正式上线了 go module,研究了一哈,此次示例用上.
 
@@ -126,20 +125,6 @@ CMD ["/app"]
 
 
 ```dockerfile
-FROM golang:alpine as builder  
-COPY src/ /opt/src                                                                                                                                    COPY Makefile /opt                                                                                                                                            WORKDIR /opt                                                                                                                                         RUN apk add --update make upx git                                                                                                   RUN go get -u github.com/gin-gonic/gin \\                                                                                                      && go get -u github.com/gin-contrib/cors \                                                                                                       && go get -u github.com/sirupsen/logrus \                                                                                                           && go get -u github.com/fatih/color \                                                                                                           && go get -u github.com/spf13/cobra \                                                                                                   && go get -u github.com/go-sql-driver/mysql \                                                                                                           && go get -u github.com/jinzhu/gorm \                                                                                                      && go get -u github.com/dgrijalva/jwt-go \                                                                                                   && go get -u github.com/bitly/go-simplejson \                                                                                           && go get -u github.com/lestrrat/go-file-rotatelogs \                                                                                                    && go get -u github.com/getsentry/raven-go \                                                                                                        && go get -u github.com/streadway/amqp \                                                                                                         && go get -u github.com/tidwall/gjson \                                                                                                           && go get -u github.com/spf13/viper \                                                                                                                                                && go get -u github.com/rifflock/lfshook
-                                                                                                                                            RUN make docker
-                                                                                                                                            FROM scratch                                                                                                                                COPY --from=builder /opt/robotsln /usr/local/bin/
-COPY --from=builder /opt/conf.yaml /src/robocli/
-RUN ls
-                                                                                                                                            # Refer: http://blog.cloud66.com/x509-error-when-using-https-inside-a-docker-container/
-                                                                                                                                            RUN apk add --no-cache --update ca-certificates tzdata
-                                                                                                                                            ENV TZ Asia/Shanghai
-                                                                                                                                           EXPOSE 9008
-                                                                                                                                            CMD [ "project", "-l", ":9008","-d","database.connection"]
-```
-
-```dockerfile
 # 1.go-build   这一部分使用go mod download
 FROM golang:alpine AS build
  # 设置我们应用程序的工作目录
@@ -174,10 +159,9 @@ CMD ["./project"]
 提交代码触发了CI/CD,上服务器看了看新构建的容器比之前小了5MB.
 
 
+---
 
-####
-
-####ADD 还是 COPY?
+**ADD 还是 COPY?**
 
 copy是add的精简版.在大部分情况下docker官方推荐使用copy.
 

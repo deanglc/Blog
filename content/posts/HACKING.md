@@ -80,7 +80,7 @@ All `g`, `m`, and `p` objects are heap allocated, but are never freed,
 so their memory remains type stable. As a result, the runtime can
 avoid write barriers in the depths of the scheduler.
 
-***g、m、p对象都分配在堆上且从不释放,所以他们在内存十分稳定.因此runtime底层无需实现写屏障 .[write barriers本渣没得底蕴,暂时翻不出来](https://www.zhihu.com/question/62000722)***
+***g、m、p对象都分配在堆上且从不释放,所以他们在内存十分稳定.因此runtime底层无需实现写屏障 .[write barriers&gc](https://www.zhihu.com/question/62000722)***
 
 User stacks and system stacks-用户栈&系统栈
 -----------------------------
